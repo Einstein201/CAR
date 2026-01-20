@@ -2,6 +2,8 @@ package fr.univlille.store.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class Client {
@@ -11,6 +13,9 @@ public class Client {
     private String password;
     private String nom;
     private String prenom;
+    
+    @OneToMany(mappedBy = "client")
+    private List<Commande> commandes;
     
     public Client() {
     }
@@ -46,5 +51,12 @@ public class Client {
         this.password = password;
     }
     
+    public List<Commande> getCommandes() {
+        return commandes;
+    }
+    
+    public void setCommandes(List<Commande> commandes) {
+        this.commandes = commandes;
+    }
  
 }

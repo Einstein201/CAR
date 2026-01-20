@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title> Mes Commandes</title>
+</head>
+<body>
+ <h1>Mes Commandes </h1>
+    
+ <p>Connecté en tant que : <strong th:text="${client.prenom + ' ' + client.nom}"></strong></p>
+    
+    <form action="/store/commandes/create" method="post">
+        <button type="submit">Créer une nouvelle commande</button>
+    </form>
+    
+    <br>
+    
+    <div th:if="${commandes.size() == 0}">
+        <p>Aucune commande pour l'instant.</p>
+    </div>
+    
+    <div th:if="${commandes.size() > 0}">
+        <h2>Liste des commandes</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th> Numéro </th>
+                    <th> Total </th>
+                    <th> Actions </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="commande : ${commandes}">
+                    <td th:text="${commande.id}"></td>
+                    <td th:text="${commande.total} + ' €'"></td>
+                    <td>
+                        <a th:href="@{/store/commandes/{id}(id=${commande.id})}">Voir détails</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <br>
+    <a href="/store/home"> Retour à l'accueil </a>
+</body>
+</html>

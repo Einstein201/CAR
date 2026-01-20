@@ -26,16 +26,16 @@ public class ClientController {
                           @RequestParam String password,
                           @RequestParam String nom,
                           @RequestParam String prenom) {
-
-
         // creation nouveau client
         Client client = new Client();
-        client.setNom(nom);
-        client.setPrenom(prenom);
-
         client.setEmail(email);
         client.setPassword(password);
+        client.setNom(nom);
+        client.setPrenom(prenom);
+        
+        // enregistremnt dans la base
         clientRepository.save(client);
+        
         return "redirect:/store/home";
     }
     
@@ -48,21 +48,30 @@ public class ClientController {
     public String login(@RequestParam String email, 
                        @RequestParam String password, 
                        HttpSession session) {
-        Optional<Client> client = clientRepository.findById(email);
 
-        // verif si client existe et bon mot de passe
-        
-        if (client.isPresent() && client.get().getPassword().equals(password)) {
-            session.setAttribute("client", client.get());
-            return "redirect:/store/home";
+        // re cherche  client par email
+        Optional<Client> clientOpt = clientRepository.findById(email);
+
+        // verif si l client existe
+        if (clientOpt.isPresent()) {
+            Client client = clientOpt.get();
+
+            // verificaton mot de passe
+            if (client.getPassword().equals(password)) {
+                // add  client on the session
+                session.setAttribute("client", client);
+                return "redirect:/store/home";
+            }
         }
 
-        // sinon retour login
+        // si erreur retour au login
         return "redirect:/store/login";
     }
     
     @GetMapping("/store/logout")
     public String logout(HttpSession session) {
+        
+        // detruir la session
         session.invalidate();
         return "redirect:/store/home";
     }

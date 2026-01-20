@@ -11,6 +11,7 @@
     
     <div th:if="${client != null}">
         <p>Connecté en tant que : <strong th:text="${client.prenom + ' ' + client.nom}"></strong></p>
+        <a href="/store/commandes">Mes commandes</a> | 
         <a href="/store/logout">Se déconnecter</a>
     </div>
     
