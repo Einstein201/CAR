@@ -22,7 +22,6 @@ public class Commande {
     @OneToMany(mappedBy = "commande")
     private List<Ligne> lignes = new ArrayList<>();
     
-    // constructeur vid
     public Commande() {
     }
     
@@ -50,13 +49,10 @@ public class Commande {
         this.lignes = lignes;
     }
     
-    // calcul du total de la commande
     public double getTotal() {
         double total = 0;
-        // on parcourt toutes les lignes
-        for (int i = 0; i < lignes.size(); i++) {
-            Ligne ligne = lignes.get(i);
-            total = total + ligne.getTotal();
+        for(Ligne ligne : lignes){
+            total += ligne.getTotal();
         }
         return total;
     }

@@ -3,10 +3,11 @@ package fr.univlille.store.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class Client {
+public class Client implements Serializable {
     
     @Id
     private String email;

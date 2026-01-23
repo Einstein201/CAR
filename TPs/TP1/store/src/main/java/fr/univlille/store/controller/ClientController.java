@@ -26,15 +26,14 @@ public class ClientController {
                           @RequestParam String password,
                           @RequestParam String nom,
                           @RequestParam String prenom) {
-        // creation nouveau client
+        
         Client client = new Client();
         client.setEmail(email);
         client.setPassword(password);
         client.setNom(nom);
         client.setPrenom(prenom);
-        
-        // enregistremnt dans la base
         clientRepository.save(client);
+        System.out.println("Nouveau client cree: " + email);
         
         return "redirect:/store/home";
     }
@@ -48,30 +47,22 @@ public class ClientController {
     public String login(@RequestParam String email, 
                        @RequestParam String password, 
                        HttpSession session) {
-
-        // re cherche  client par email
-        Optional<Client> clientOpt = clientRepository.findById(email);
-
-        // verif si l client existe
-        if (clientOpt.isPresent()) {
-            Client client = clientOpt.get();
-
-            // verificaton mot de passe
-            if (client.getPassword().equals(password)) {
-                // add  client on the session
+        System.out.println("Tentative de connexion pour: " + email);
+        Optional<Client> c = clientRepository.findById(email);
+        if(c.isPresent()) {
+            Client client = c.get();
+            if(client.getPassword().equals(password)){
+                System.out.println("Connexion reussie pour " + email);
                 session.setAttribute("client", client);
                 return "redirect:/store/home";
             }
         }
-
-        // si erreur retour au login
+        System.out.println("Echec connexion");
         return "redirect:/store/login";
     }
     
     @GetMapping("/store/logout")
     public String logout(HttpSession session) {
-        
-        // detruir la session
         session.invalidate();
         return "redirect:/store/home";
     }

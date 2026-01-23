@@ -13,14 +13,13 @@ public class Ligne {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    private String libelle; // nom du produit
-    private int quantite; // quantite commandee
-    private double prixUnitaire; // prix d'un produit
+    private String libelle;
+    private int quantite;
+    private double prixUnitaire;
     
     @ManyToOne
     private Commande commande;
     
-    // constructeur
     public Ligne() {
     }
     
@@ -64,9 +63,7 @@ public class Ligne {
         this.commande = commande;
     }
     
-    // calcul du prix total de la ligne
     public double getTotal() {
-        double total = quantite * prixUnitaire;
-        return total;
+        return quantite * prixUnitaire;
     }
 }

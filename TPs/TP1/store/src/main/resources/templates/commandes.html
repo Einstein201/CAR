@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title> Mes Commandes</title>
+    <title>Mes Commandes</title>
 </head>
 <body>
- <h1>Mes Commandes </h1>
+<h1>Mes Commandes</h1>
     
- <p>Connecté en tant que : <strong th:text="${client.prenom + ' ' + client.nom}"></strong></p>
+<p>Connecte en tant que : <strong th:text="${client.prenom + ' ' + client.nom}"></strong></p>
     
     <form action="/store/commandes/create" method="post">
         <button type="submit">Créer une nouvelle commande</button>
