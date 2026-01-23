@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails de la commande</title>
+</head>
+<body>
+    <h1>Commande no <span th:text="${commande.id}"></span></h1>
+    
+    <p>Client : <strong th:text="${client.prenom + ' ' + client.nom}"></strong></p>
+    
+    <h1>Lignes de commande</h1>
+    
+    <h2>Ajouter une ligne</h2>
+
+
+    <form th:action="@{/store/commandes/{id}/lignes/add(id=${commande.id})}" method="post">
+        <label>Produit : </label>
+        <input type="text" name="libelle" required />
+        <br><br>
+        
+        <label>Quantité : </label>
+        <input type="number" name="quantite" min="1" value="1" required />
+        <br><br>
+        
+        <label>Prix unitaire : </label>
+        <input type="number" name="prixUnitaire" step="0.01" min="0" required />
+        <br><br>
+        
+        <button type="submit"> Ajouter </button>
+
+    </form>
+
+    
+    <br>
+    
+    
+    <div th:if="${commande.lignes.size() == 0}">
+        <p>Aucune ligne dans cette commande.</p>
+    </div>
+    
+    <div th:if="${commande.lignes.size() > 0}">
+        <table border="1">
+            
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                     <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                     <th>Total</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                <tr th:each="ligne : ${commande.lignes}">
+                    <td th:text="${ligne.libelle}"></td>
+                    <td th:text="${ligne.quantite}"></td>
+                    <td th:text="${ligne.prixUnitaire} + ' €'"></td>
+                    <td th:text="${ligne.total} + ' €'"></td>
+                    <td>
+                        <form th:action="@{/store/commandes/{cid}/lignes/{lid}/delete(cid=${commande.id},lid=${ligne.id})}" method="post" style="display:inline;">
+                            <button type="submit">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3"><strong>Total commande :</strong></td>
+                    <td colspan="2"><strong th:text="${commande.total} + ' €'"></strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <br>
+    <a href="/store/commandes">Retour a mes commandes</a>
+</body>
+</html>
