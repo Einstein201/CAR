@@ -158,4 +158,35 @@ public class CommandeController {
         
         return "redirect:/store/commandes/" + commandeId;
     }
+    
+
+    @GetMapping("/store/commandes/{id}/print")
+    public String imprimerCommande(@PathVariable Long id, HttpSession session, Model model) {
+
+        // recuperer le client
+        Client client = (Client) session.getAttribute("client");
+        
+        // verif connexion
+
+            if (client == null) {
+                return "redirect:/store/login";
+            }
+        
+        // chech commande
+        Optional<Commande> commandeOpt = commandeRepository.findById(id);
+        
+        if (commandeOpt.isPresent()) {
+            Commande commande = commandeOpt.get();
+            
+            // verifier que la commande appartient au client
+            if (commande.getClient().getEmail().equals(client.getEmail())) {
+                model.addAttribute("commande", commande);
+                model.addAttribute("client", client);
+                return "commande-print";
+            }
+        }
+        
+        // si probleme retour a la liste
+        return "redirect:/store/commandes";
+    }
 }
