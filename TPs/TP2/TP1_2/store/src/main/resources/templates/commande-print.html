@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Commande - Impression</title>
+    <style>
+        /* style pour impression */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .info-client {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        table th, table td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        table th {
+            background-color: #333;
+            color: white;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+        
+        .no-print {
+            margin-top: 20px;
+        }
+        
+        /* cacher les boutons lors de l'impression */
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>COMMANDE N° <span th:text="${commande.id}"></span></h1>
+    
+    <div class="info-client">
+        <p><strong>Client :</strong> <span th:text="${client.prenom + ' ' + client.nom}"></span></p>
+        <p><strong>Email :</strong> <span th:text="${client.email}"></span></p>
+    </div>
+    
+    <h2>Détail de la commande</h2>
+    
+    <div th:if="${commande.lignes.size() == 0}">
+        <p>Cette commande ne contient aucune ligne.</p>
+    </div>
+    
+    <div th:if="${commande.lignes.size() > 0}">
+        <table>
+            <thead>
+                <tr>
+                    <th>Produit </th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th>Total ligne</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ligne : ${commande.lignes}">
+                    <td th:text="${ligne.libelle}"></td>
+                    <td th:text="${ligne.quantite}"></td>
+                    <td th:text="${ligne.prixUnitaire} + ' €'"></td>
+                    <td th:text="${ligne.total} + ' €'"></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="3" style="text-align: right;">TOTAL COMMANDE :</td>
+                    <td th:text="${commande.total} + ' €'"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="no-print">
+        <br>
+        <button onclick="window.print()">Imprimer</button>
+        <button onclick="window.close()">Fermer</button>
+    </div>
+</body>
+</html>
