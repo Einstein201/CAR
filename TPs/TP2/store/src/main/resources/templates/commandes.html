@@ -25,6 +25,7 @@
             <thead>
                 <tr>
                     <th> Numéro </th>
+                    <th> Statut </th>
                     <th> Total </th>
                     <th> Actions </th>
                 </tr>
@@ -32,6 +33,7 @@
             <tbody>
                 <tr th:each="commande : ${commandes}">
                     <td th:text="${commande.id}"></td>
+                    <td th:text="${commande.statut}"></td>
                     <td th:text="${commande.total} + ' €'"></td>
                     <td>
                         <a th:href="@{/store/commandes/{id}(id=${commande.id})}">Voir détails</a>

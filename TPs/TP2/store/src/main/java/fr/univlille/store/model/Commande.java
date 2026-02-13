@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -21,6 +23,9 @@ public class Commande {
     
     @OneToMany(mappedBy = "commande")
     private List<Ligne> lignes = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private StatutCommande statut = StatutCommande.BROUILLON;
     
     public Commande() {
     }
@@ -47,6 +52,14 @@ public class Commande {
     
     public void setLignes(List<Ligne> lignes) {
         this.lignes = lignes;
+    }
+
+    public StatutCommande getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutCommande statut) {
+        this.statut = statut;
     }
     
     public double getTotal() {
