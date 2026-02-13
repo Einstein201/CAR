@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Store</title>
+</head>
+<body>
+<h1>Bienvenue sur HStore</h1>
+<p>Application de gestion de commandes</p>
+<br>
+
+<div th:if="${client != null}">
+    <p>Connecte en tant que : <strong th:text="${client.prenom + ' ' + client.nom}"></strong></p>
+    <a href="/store/commandes">Mes commandes</a> | 
+    <a href="/store/logout">Se deconnecter</a>
+</div>
+
+<div th:if="${client == null}">
+    <a href="/store/register">Creer un compte</a> | 
+    <a href="/store/login">Se connecter</a>
+</div>
+</body>
+</html>
