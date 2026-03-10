@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import fr.univlille.store.kafka.CommandeKafkaProducer;
 import fr.univlille.store.model.Client;
 import fr.univlille.store.model.Commande;
 import fr.univlille.store.model.Ligne;
@@ -29,6 +30,9 @@ public class CommandeController {
     
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private CommandeKafkaProducer commandeKafkaProducer;
     
     @GetMapping("/store/commandes")
     public String listCommandes(HttpSession session, Model model) {
@@ -139,6 +143,7 @@ public class CommandeController {
                     && commande.getStatut() == StatutCommande.BROUILLON) {
                 commande.setStatut(StatutCommande.SOUMISE);
                 commandeRepository.save(commande);
+                commandeKafkaProducer.envoyerCommandeSoumise(commande);
             }
         }
         return "redirect:/store/commandes/" + id;
