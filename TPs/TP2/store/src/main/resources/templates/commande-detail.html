@@ -70,6 +70,10 @@
     </div>
     
     <br>
+    <form th:if="${commande.statut.name() == 'BROUILLON'}" th:action="@{/store/commandes/{id}/submit(id=${commande.id})}" method="post" style="display:inline;">
+        <button type="submit">Soumettre la commande</button>
+    </form>
+    <span th:if="${commande.statut.name() == 'BROUILLON'}"> | </span>
     <a th:href="@{/store/commandes/{id}/print(id=${commande.id})}" target="_blank">Imprimer la commande</a> | 
     <a href="/store/commandes">Retour a mes commandes</a>
 </body>

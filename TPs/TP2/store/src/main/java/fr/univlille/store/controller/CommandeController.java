@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fr.univlille.store.model.Client;
 import fr.univlille.store.model.Commande;
 import fr.univlille.store.model.Ligne;
+import fr.univlille.store.model.StatutCommande;
 import fr.univlille.store.repository.CommandeRepository;
 import fr.univlille.store.repository.LigneRepository;
 import fr.univlille.store.repository.ClientRepository;
@@ -124,6 +125,23 @@ public class CommandeController {
             }
         }
         return "redirect:/store/commandes/" + commandeId;
+    }
+
+    @PostMapping("/store/commandes/{id}/submit")
+    public String soumettreCommande(@PathVariable Long id, HttpSession session) {
+        Client client = (Client) session.getAttribute("client");
+        if (client == null) return "redirect:/store/login";
+
+        Optional<Commande> cmd = commandeRepository.findById(id);
+        if (cmd.isPresent()) {
+            Commande commande = cmd.get();
+            if (commande.getClient().getEmail().equals(client.getEmail())
+                    && commande.getStatut() == StatutCommande.BROUILLON) {
+                commande.setStatut(StatutCommande.SOUMISE);
+                commandeRepository.save(commande);
+            }
+        }
+        return "redirect:/store/commandes/" + id;
     }
     
 
