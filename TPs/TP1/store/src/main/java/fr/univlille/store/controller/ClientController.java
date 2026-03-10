@@ -5,6 +5,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fr.univlille.store.model.Client;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class ClientController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientController.class);
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
     @Autowired
     private ClientRepository clientRepository;
@@ -37,7 +40,7 @@ public class ClientController {
         
         Client client = new Client();
         client.setEmail(email);
-        client.setPassword(password);
+        client.setPassword(passwordEncoder.encode(password));
         client.setNom(nom);
         client.setPrenom(prenom);
         clientRepository.save(client);
@@ -59,7 +62,7 @@ public class ClientController {
         Optional<Client> c = clientRepository.findById(email);
         if(c.isPresent()) {
             Client client = c.get();
-            if(client.getPassword().equals(password)){
+            if(passwordEncoder.matches(password, client.getPassword())){
                 logger.info("Connexion reussie pour {}", email);
                 session.setAttribute("client", client);
                 return "redirect:/store/home";
