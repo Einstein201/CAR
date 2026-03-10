@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import fr.univlille.store.model.Client;
 import fr.univlille.store.model.Commande;
 import fr.univlille.store.model.Ligne;
@@ -19,6 +21,8 @@ import java.util.List;
 
 @Controller
 public class CommandeController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CommandeController.class);
     
     @Autowired
     private CommandeRepository commandeRepository;
@@ -33,7 +37,7 @@ public class CommandeController {
     public String listCommandes(HttpSession session, Model model) {
         Client sessionClient = (Client) session.getAttribute("client");
         if(sessionClient == null){
-            System.out.println("Client non connecte");
+            logger.warn("Client non connecte");
             return "redirect:/store/login";
         }
         
@@ -45,7 +49,7 @@ public class CommandeController {
         Client client = clientOpt.get();
         
         List<Commande> commandes = commandeRepository.findByClient(client);
-        System.out.println("Nombre de commandes: " + commandes.size());
+        logger.info("Nombre de commandes: {}", commandes.size());
         model.addAttribute("client", client);
         model.addAttribute("commandes", commandes);
         return "commandes";
@@ -59,7 +63,7 @@ public class CommandeController {
         Commande commande = new Commande();
         commande.setClient(client);
         commandeRepository.save(commande);
-        System.out.println("Commande creee avec id: " + commande.getId());
+        logger.info("Commande creee avec id: {}", commande.getId());
         return "redirect:/store/commandes";
     }
     
@@ -93,11 +97,11 @@ public class CommandeController {
         if(client==null) return "redirect:/store/login";
 
         if (libelle == null || libelle.trim().isEmpty() || quantite <= 0 || prixUnitaire < 0) {
-            System.out.println("Echec ajout ligne: donnees invalides");
+            logger.warn("Echec ajout ligne: donnees invalides");
             return "redirect:/store/commandes/" + id + "?error=invalid_line";
         }
         
-        System.out.println("Ajout ligne: " + libelle + ", qte: " + quantite);
+        logger.info("Ajout ligne: {}, qte: {}", libelle, quantite);
         Optional<Commande> cmd = commandeRepository.findById(id);
         if(cmd.isPresent()){
             Commande commande = cmd.get();
@@ -124,7 +128,7 @@ public class CommandeController {
         if(l.isPresent()){
             Ligne ligne = l.get();
             if(ligne.getCommande().getClient().getEmail().equals(client.getEmail())){
-                System.out.println("Suppression ligne id: " + ligneId);
+                logger.info("Suppression ligne id: {}", ligneId);
                 ligneRepository.delete(ligne);
             }
         }
