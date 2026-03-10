@@ -26,6 +26,10 @@ public class ClientController {
                           @RequestParam String password,
                           @RequestParam String nom,
                           @RequestParam String prenom) {
+        if (clientRepository.existsById(email)) {
+            System.out.println("Echec inscription: email deja utilise " + email);
+            return "redirect:/store/register?error=email_exists";
+        }
         
         Client client = new Client();
         client.setEmail(email);

@@ -91,6 +91,11 @@ public class CommandeController {
                                HttpSession session) {
         Client client = (Client) session.getAttribute("client");
         if(client==null) return "redirect:/store/login";
+
+        if (libelle == null || libelle.trim().isEmpty() || quantite <= 0 || prixUnitaire < 0) {
+            System.out.println("Echec ajout ligne: donnees invalides");
+            return "redirect:/store/commandes/" + id + "?error=invalid_line";
+        }
         
         System.out.println("Ajout ligne: " + libelle + ", qte: " + quantite);
         Optional<Commande> cmd = commandeRepository.findById(id);
