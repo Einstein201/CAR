@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class Commande {
     @ManyToOne
     private Client client;
     
-    @OneToMany(mappedBy = "commande")
+    @OneToMany(mappedBy = "commande", fetch = FetchType.EAGER)
     private List<Ligne> lignes = new ArrayList<>();
     
     public Commande() {

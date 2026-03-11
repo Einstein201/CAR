@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Creer un compte</h1>
-    <p th:if="${param.error != null}" style="color: red;">
+    <p th:if="${param.error != null and param.error[0] == 'email_exists'}" style="color: red;">
         Cet email est deja utilise.
     </p>
     <form method="post" action="/store/register">

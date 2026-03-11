@@ -29,23 +29,25 @@ public class ClientController {
     }
     
     @PostMapping("/store/register")
-    public String register(@RequestParam String email, 
+    public String register(@RequestParam String email,
                           @RequestParam String password,
                           @RequestParam String nom,
-                          @RequestParam String prenom) {
+                          @RequestParam String prenom,
+                          HttpSession session) {
         if (clientRepository.existsById(email)) {
             logger.warn("Echec inscription: email deja utilise {}", email);
             return "redirect:/store/register?error=email_exists";
         }
-        
+
         Client client = new Client();
         client.setEmail(email);
         client.setPassword(passwordEncoder.encode(password));
         client.setNom(nom);
         client.setPrenom(prenom);
         clientRepository.save(client);
-        logger.info("Nouveau client cree: {}", email);
-        
+        session.setAttribute("client", client);
+        logger.info("Nouveau client cree et connecte: {}", email);
+
         return "redirect:/store/home";
     }
     
@@ -69,7 +71,7 @@ public class ClientController {
             }
         }
         logger.warn("Echec connexion pour {}", email);
-        return "redirect:/store/login";
+        return "redirect:/store/login?error=true";
     }
     
     @GetMapping("/store/logout")
