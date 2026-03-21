@@ -9,7 +9,7 @@
     
 <p>Connecte en tant que : <strong th:text="${client.prenom + ' ' + client.nom}"></strong></p>
     
-    <form action="/store/commandes/create" method="post">
+    <form action="/store/commandes/create" method="get">
         <button type="submit">Créer une nouvelle commande</button>
     </form>
     

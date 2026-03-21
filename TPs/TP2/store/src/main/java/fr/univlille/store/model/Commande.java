@@ -25,7 +25,7 @@ public class Commande {
     private List<Ligne> lignes = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private StatutCommande statut = StatutCommande.BROUILLON;
+    private StatutCommande statut = StatutCommande.COMMANDE_EN_COURS;
     
     public Commande() {
     }

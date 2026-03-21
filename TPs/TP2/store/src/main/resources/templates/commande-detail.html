@@ -14,8 +14,14 @@
     
 <h3>Ajouter une ligne</h3>
 <form th:action="@{/store/commandes/{id}/lignes/add(id=${commande.id})}" method="post">
-    <label>Produit : </label>
-    <input type="text" name="libelle" required />
+    <label>Produit :
+        <select name="libelle" required>
+            <option value="" disabled selected>Choisir un produit</option>
+            <option th:each="article : ${articles}"
+                    th:value="${article.libelle}"
+                    th:text="${article.libelle}"></option>
+        </select>
+    </label>
     <br><br>
     <label>Quantite : </label>
     <input type="number" name="quantite" min="1" value="1" required />
@@ -25,6 +31,9 @@
     <br><br>
     <button type="submit">Ajouter</button>
 </form>
+<div th:if="${param.error} == 'stock'">
+    <p style="color:red;">Quantité demandée supérieure au stock disponible !</p>
+</div>
 
     
     <br>

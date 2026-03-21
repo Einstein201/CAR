@@ -1,6 +1,6 @@
 package fr.univlille.store.model;
 
 public enum StatutCommande {
-    BROUILLON,
+    COMMANDE_EN_COURS,
     SOUMISE
 }

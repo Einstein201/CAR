@@ -1,5 +1,6 @@
 package fr.univlille.store.controller;
 
+import fr.univlille.store.service.StockServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +34,8 @@ public class CommandeController {
 
     @Autowired
     private CommandeKafkaProducer commandeKafkaProducer;
+    @Autowired
+    private StockServiceClient stockServiceClient;
     
     @GetMapping("/store/commandes")
     public String listCommandes(HttpSession session, Model model) {
@@ -56,15 +59,53 @@ public class CommandeController {
         return "commandes";
     }
     
-    @PostMapping("/store/commandes/create")
-    public String createCommande(HttpSession session) {
+
+    @GetMapping("/store/commandes/create")
+    public String showCreateCommandeForm(HttpSession session, Model model) {
         Client client = (Client) session.getAttribute("client");
         if(client==null) return "redirect:/store/login";
-        
+        model.addAttribute("articles", stockServiceClient.getArticles());
+        return "commande-create";
+    }
+
+    @PostMapping("/store/commandes/create")
+    public String createCommandeWithLigne(HttpSession session,
+                                         @RequestParam String libelle,
+                                         @RequestParam int quantite,
+                                         @RequestParam double prixUnitaire) {
+        Client client = (Client) session.getAttribute("client");
+        if(client==null) return "redirect:/store/login";
+
+        // Vérification du stock disponible
+        int stockDispo = 0;
+        try {
+            var articles = stockServiceClient.getArticles();
+            for (var art : articles) {
+                if (libelle.equals(art.get("libelle"))) {
+                    stockDispo = (int) art.get("quantiteStock");
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la récupération du stock: " + e.getMessage());
+        }
+        if (quantite > stockDispo) {
+            // Stock insuffisant, message d'erreur
+            return "redirect:/store/commandes/create?error=stock";
+        }
+
         Commande commande = new Commande();
         commande.setClient(client);
         commandeRepository.save(commande);
-        System.out.println("Commande creee avec id: " + commande.getId());
+
+        Ligne ligne = new Ligne();
+        ligne.setLibelle(libelle);
+        ligne.setQuantite(quantite);
+        ligne.setPrixUnitaire(prixUnitaire);
+        ligne.setCommande(commande);
+        ligneRepository.save(ligne);
+
+        System.out.println("Commande creee avec id: " + commande.getId() + " et première ligne ajoutée");
         return "redirect:/store/commandes";
     }
     
@@ -81,6 +122,7 @@ public class CommandeController {
             if(commande.getClient().getEmail().equals(client.getEmail())){
                 model.addAttribute("commande", commande);
                 model.addAttribute("client", client);
+                model.addAttribute("articles", stockServiceClient.getArticles());
                 return "commande-detail";
             }
         }
@@ -98,6 +140,23 @@ public class CommandeController {
         if(client==null) return "redirect:/store/login";
         
         System.out.println("Ajout ligne: " + libelle + ", qte: " + quantite);
+        // Vérification du stock disponible
+        int stockDispo = 0;
+        try {
+            var articles = stockServiceClient.getArticles();
+            for (var art : articles) {
+                if (libelle.equals(art.get("libelle"))) {
+                    stockDispo = (int) art.get("quantiteStock");
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la récupération du stock: " + e.getMessage());
+        }
+        if (quantite > stockDispo) {
+            // Stock insuffisant, message d'erreur
+            return "redirect:/store/commandes/" + id + "?error=stock";
+        }
         Optional<Commande> cmd = commandeRepository.findById(id);
         if(cmd.isPresent()){
             Commande commande = cmd.get();
@@ -139,8 +198,8 @@ public class CommandeController {
         Optional<Commande> cmd = commandeRepository.findById(id);
         if (cmd.isPresent()) {
             Commande commande = cmd.get();
-            if (commande.getClient().getEmail().equals(client.getEmail())
-                    && commande.getStatut() == StatutCommande.BROUILLON) {
+                if (commande.getClient().getEmail().equals(client.getEmail())
+                    && commande.getStatut() == StatutCommande.COMMANDE_EN_COURS) {
                 commande.setStatut(StatutCommande.SOUMISE);
                 commandeRepository.save(commande);
                 commandeKafkaProducer.envoyerCommandeSoumise(commande);

@@ -1,4 +1,6 @@
+
 package fr.univlille.stockservice.controller;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import fr.univlille.stockservice.model.Article;
 import fr.univlille.stockservice.service.StockService;
@@ -15,6 +17,13 @@ public class StockController {
 
     public StockController(StockService stockService) {
         this.stockService = stockService;
+    }
+
+    // Endpoint REST pour la liste des articles en JSON
+    @GetMapping("/api/stocks")
+    @ResponseBody
+    public List<Article> getStocksJson() {
+        return stockService.getAllArticles();
     }
 
     @GetMapping("/stocks")

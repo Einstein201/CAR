@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelle commande</title>
+</head>
+<body>
+<h1>Créer une nouvelle commande</h1>
+<form action="/store/commandes/create" method="post">
+    <input type="hidden" name="action" value="createWithLigne" />
+    <label>Produit :
+        <select name="libelle" required>
+            <option value="" disabled selected>Choisir un produit</option>
+            <option th:each="article : ${articles}"
+                    th:value="${article.libelle}"
+                    th:text="${article.libelle}"></option>
+        </select>
+    </label><br>
+    <label>Quantité : <input type="number" name="quantite" min="1" required></label><br>
+    <label>Prix unitaire : <input type="number" name="prixUnitaire" min="0" step="0.01" required></label><br>
+    <button type="submit">Créer la commande</button>
+</form>
+<div th:if="${param.error} == 'stock'">
+    <p style="color:red;">Quantité demandée supérieure au stock disponible !</p>
+</div>
+<a href="/store/commandes">Retour à la liste des commandes</a>
+</body>
+</html>

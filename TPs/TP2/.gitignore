@@ -1,0 +1,36 @@
+# Fichiers et dossiers à ignorer pour un projet Java/Maven
+
+# Dossiers de build
+/target/
+
+# Fichiers compilés
+*.class
+
+# Archives générées
+*.jar
+*.war
+*.ear
+
+# Rapports de tests
+/surefire-reports/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de logs
+*.log
+
+# Fichiers temporaires
+*.tmp
+*.swp
+
+# Configuration IDE
+/.idea/
+*.iml
+*.ipr
+*.iws
+/.vscode/
+
+# Autres
+*.bak
