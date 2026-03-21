@@ -2,12 +2,13 @@ package fr.univlille.stockservice.controller;
 
 import fr.univlille.stockservice.model.Article;
 import fr.univlille.stockservice.service.StockService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
+@Controller
 public class StockController {
 
     private final StockService stockService;
@@ -17,7 +18,9 @@ public class StockController {
     }
 
     @GetMapping("/stocks")
-    public List<Article> listerStocks() {
-        return stockService.getAllArticles();
+    public String listerStocks(Model model) {
+        List<Article> articles = stockService.getAllArticles();
+        model.addAttribute("articles", articles);
+        return "stock";
     }
 }
