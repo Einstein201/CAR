@@ -9,6 +9,10 @@
 
     <h1> Connexion </h1>
 
+    <p th:if="${param.error != null and param.error[0] == 'true'}" style="color: red;">
+        Email ou mot de passe incorrect.
+    </p>
+
     <form method="post" action="/store/login">
         <div>
             <label>E mail : </label>
